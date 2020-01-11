@@ -2,4 +2,4 @@
 
 A sample Flappy Bird clone using Flame.
 
-![res/screenshot.png](screenshot)
+![screenshot](res/screenshot.png)
