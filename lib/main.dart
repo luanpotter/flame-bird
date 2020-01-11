@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
+import 'package:flame/anchor.dart';
 import 'package:flame/components/animation_component.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/position.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -35,13 +37,16 @@ class Bird extends AnimationComponent with Resizable {
   bool frozen = true;
   double speedY;
 
-  Bird(Size size) : super.sequenced(SIZE, SIZE, 'bird.png', 3, textureWidth: 8.0, textureHeight: 8.0);
+  Bird(Size size) : super.sequenced(SIZE, SIZE, 'bird.png', 3, textureWidth: 8.0, textureHeight: 8.0) {
+    anchor = Anchor.center;
+  }
 
   void reset() {
     frozen = true;
+    x = size.width / 2;
+    y = size.height / 2;
     speedY = 0.0;
-    x = (size.width - SIZE) / 2;
-    y = (size.height - SIZE) / 2;
+    angle = math.pi / 2 - velocity.angle();
   }
 
   @override
@@ -50,13 +55,15 @@ class Bird extends AnimationComponent with Resizable {
     this.reset();
   }
 
+  Position get velocity => Position(speedY, 500.0);
+
   @override
   void update(double t) {
     if (!frozen) {
       super.update(t);
       this.y += speedY * t - GRAVITY * t * t / 2;
       this.speedY += GRAVITY;
-      this.angle = math.atan2(speedY, 500.0);
+      this.angle = math.pi / 2 - velocity.angle();
     }
   }
 
