@@ -37,7 +37,7 @@ class Bird extends AnimationComponent with Resizable {
   bool frozen = true;
   double speedY;
 
-  Bird(Size size) : super.sequenced(SIZE, SIZE, 'bird.png', 3, textureWidth: 8.0, textureHeight: 8.0) {
+  Bird(Size size) : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
     anchor = Anchor.center;
   }
 
