@@ -17,28 +17,48 @@ void main() async {
   runApp(game.widget);
 }
 
+
+class MyGame extends BaseGame {
+  Bird bird;
+  Bg background;
+
+  MyGame(Size size) {
+    add(background = Bg());
+    add(bird = Bird(size));
+  }
+
+  @override
+  void onTap() {
+    bird?.tap();
+  }
+}
+
 class Bg extends Component with Resizable {
-  static final _blue = Paint()..color = const Color(0xFF5B6EE1);
+  static final _brown = const Color(0xFFDDC0A3);
+
+  Color color = Bg._brown;
 
   @override
   void render(Canvas c) {
-      c.drawRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height), _blue);
+      c.drawRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height), bgColor);
   }
+
+  get bgColor => Paint()..color = color;
 
   @override
   void update(double t) {}
 }
 
 class Bird extends AnimationComponent with Resizable {
-  static const SIZE = 32.0;
+  static const SIZE = 52.0;
   static const GRAVITY = 13.0;
-  static const BOOST = 320.0;
+  static const  BOOST = 320.0;
 
   bool frozen = true;
   double speedY;
 
   Bird(Size size) : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
-    anchor = Anchor.center;
+    anchor = Anchor.bottomCenter;
   }
 
   void reset() {
@@ -64,11 +84,15 @@ class Bird extends AnimationComponent with Resizable {
       this.y += speedY * t - GRAVITY * t * t / 2;
       this.speedY += GRAVITY;
       this.angle = math.pi / 2 - velocity.angle();
+
+      if(y > size.height + 150) {
+        this.reset();
+      }
     }
   }
 
   void boost() {
-    speedY = -BOOST;
+    speedY = (speedY-BOOST).clamp(-BOOST, speedY);
   }
 
   void tap() {
@@ -79,19 +103,5 @@ class Bird extends AnimationComponent with Resizable {
     } else {
       boost();
     }
-  }
-}
-
-class MyGame extends BaseGame {
-  Bird bird;
-
-  MyGame(Size size) {
-    add(Bg());
-    add(bird = Bird(size));
-  }
-
-  @override
-  void onTap() {
-    bird?.tap();
   }
 }
