@@ -27,10 +27,11 @@ class Bg extends Component with Resizable {
 
 class Bird extends AnimationComponent with Resizable {
   static const SIZE = 52.0;
-  static const GRAVITY = 100.0;
-  static const BOOST = 320.0;
+  static const GRAVITY = 150.0;
+  static const BOOST = 120.0;
 
   double speedY = 0.0;
+  bool isFrozen = true;
 
   Bird() : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
     this.anchor = Anchor.center;
@@ -39,22 +40,34 @@ class Bird extends AnimationComponent with Resizable {
   @override
   void update(double t) {
     super.update(t);
+    if(isFrozen) return;
 
     this.y += speedY * t - GRAVITY * t * t / 2;
     this.speedY += GRAVITY * t;
+
+    if(y > size.height) {
+      this.reset();
+    }
+  }
+
+  void reset() {
+    this.x = size.width / 2;
+    this.y = size.height / 2;
+    isFrozen = true;
+    speedY = 0.0;
   }
 
   @override
   void resize(Size size) {
     super.resize(size);
-
-    this.x = size.width / 2;
-    this.y = size.height / 2;
-    this.speedY = 0.0;
+    reset();
   }
 
   whenTap() {
-
+    if(isFrozen) {
+      isFrozen = false;
+    }
+    this.speedY = -BOOST;
   }
 }
 
