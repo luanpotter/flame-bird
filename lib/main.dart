@@ -14,13 +14,20 @@ void main() async {
   final size = await Flame.util.initialDimensions();
 
   final game = MyGame(size);
-  runApp(game.widget);
+  runApp(MaterialApp(
+    home: Scaffold(
+      appBar: AppBar(
+        title: Text("ihaaa"),
+      ),
+      body: game.widget,
+    ),
+  ));
 }
 
 class Bg extends Component with Resizable {
   @override
   void render(Canvas c) {
-    c.drawRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height), Paint()..color = Color(0xFFFF00FF));
+    c.drawRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height), Paint()..color = Color(0xFFDDC0A3));
   }
 
   @override
@@ -74,7 +81,7 @@ class Bird extends AnimationComponent with Resizable {
     if (isFrozen) {
       isFrozen = false;
     }
-    this.speedY = -BOOST;
+    this.speedY = (speedY - BOOST).clamp(-BOOST, speedY);
   }
 }
 
