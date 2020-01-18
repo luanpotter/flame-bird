@@ -26,7 +26,11 @@ class Bg extends Component with Resizable {
 }
 
 class Bird extends AnimationComponent with Resizable {
-  static const SIZE = 32.0;
+  static const SIZE = 52.0;
+  static const GRAVITY = 13.0;
+  static const BOOST = 320.0;
+
+  double speedY = 0.0;
 
   Bird() : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
     this.anchor = Anchor.center;
@@ -39,13 +43,24 @@ class Bird extends AnimationComponent with Resizable {
     this.x = size.width / 2;
     this.y = size.height / 2;
   }
+
+  whenTap() {
+
+  }
 }
 
 class MyGame extends BaseGame {
 
+  final bird = Bird();
+
   MyGame(Size size) {
     this.size = size;
     add(Bg());
-    add(Bird());
+    add(bird);
+  }
+
+  @override
+  void onTap() {
+    bird.whenTap();
   }
 }
