@@ -40,7 +40,7 @@ class Bird extends AnimationComponent with Resizable {
   @override
   void update(double t) {
     super.update(t);
-    if(isFrozen) return;
+    if (isFrozen) return;
 
     this.y += speedY * t - GRAVITY * t * t / 2;
     this.speedY += GRAVITY * t;
