@@ -51,8 +51,8 @@ class Bg extends Component with Resizable {
 
 class Bird extends AnimationComponent with Resizable {
   static const SIZE = 52.0;
-  static const GRAVITY = 13.0;
-  static const  BOOST = 320.0;
+  static const GRAVITY = 400.0;
+  static const  BOOST = 380.0;
 
   bool frozen = true;
   double speedY;
@@ -66,7 +66,7 @@ class Bird extends AnimationComponent with Resizable {
     x = size.width / 2;
     y = size.height / 2;
     speedY = 0.0;
-    angle = math.pi / 2 - velocity.angle();
+    angle = velocity.angle();
   }
 
   @override
@@ -75,31 +75,29 @@ class Bird extends AnimationComponent with Resizable {
     this.reset();
   }
 
-  Position get velocity => Position(speedY, 500.0);
+  Position get velocity => Position(200.0, speedY);
 
   @override
   void update(double t) {
     if (!frozen) {
       super.update(t);
       this.y += speedY * t - GRAVITY * t * t / 2;
-      this.speedY += GRAVITY;
-      this.angle = math.pi / 2 - velocity.angle();
+      this.speedY += GRAVITY * t;
+      this.angle = velocity.angle();
 
-      if(y > size.height + 150) {
+      if (y > size.height + 150) {
         this.reset();
       }
     }
   }
 
   void boost() {
-    speedY = (speedY-BOOST).clamp(-BOOST, speedY);
+    speedY = (speedY - BOOST).clamp(-BOOST, speedY);
   }
 
   void tap() {
     if (frozen) {
       frozen = false;
-    } else if (y > size.height) {
-      reset();
     } else {
       boost();
     }
