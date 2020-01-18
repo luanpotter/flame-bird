@@ -27,7 +27,7 @@ class Bg extends Component with Resizable {
 
 class Bird extends AnimationComponent with Resizable {
   static const SIZE = 52.0;
-  static const GRAVITY = 13.0;
+  static const GRAVITY = 100.0;
   static const BOOST = 320.0;
 
   double speedY = 0.0;
@@ -37,11 +37,20 @@ class Bird extends AnimationComponent with Resizable {
   }
 
   @override
+  void update(double t) {
+    super.update(t);
+
+    this.y += speedY * t - GRAVITY * t * t / 2;
+    this.speedY += GRAVITY * t;
+  }
+
+  @override
   void resize(Size size) {
     super.resize(size);
 
     this.x = size.width / 2;
     this.y = size.height / 2;
+    this.speedY = 0.0;
   }
 
   whenTap() {
