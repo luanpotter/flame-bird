@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 
 import 'package:flame/anchor.dart';
 import 'package:flame/components/animation_component.dart';
@@ -5,6 +6,7 @@ import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/position.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -27,8 +29,8 @@ class Bg extends Component with Resizable {
 
 class Bird extends AnimationComponent with Resizable {
   static const SIZE = 52.0;
-  static const GRAVITY = 150.0;
-  static const BOOST = 120.0;
+  static const GRAVITY = 350.0;
+  static const BOOST = 175.0;
 
   double speedY = 0.0;
   bool isFrozen = true;
@@ -37,6 +39,8 @@ class Bird extends AnimationComponent with Resizable {
     this.anchor = Anchor.center;
   }
 
+  Position get velocity => Position(200.0, speedY);
+
   @override
   void update(double t) {
     super.update(t);
@@ -44,6 +48,8 @@ class Bird extends AnimationComponent with Resizable {
 
     this.y += speedY * t - GRAVITY * t * t / 2;
     this.speedY += GRAVITY * t;
+
+    this.angle = velocity.angle();
 
     if (y > size.height) {
       this.reset();
@@ -55,6 +61,7 @@ class Bird extends AnimationComponent with Resizable {
     this.y = size.height / 2;
     isFrozen = true;
     speedY = 0.0;
+    angle = 0.0;
   }
 
   @override
