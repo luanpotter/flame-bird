@@ -45,7 +45,7 @@ class Bird extends AnimationComponent with Resizable {
     this.y += speedY * t - GRAVITY * t * t / 2;
     this.speedY += GRAVITY * t;
 
-    if(y > size.height) {
+    if (y > size.height) {
       this.reset();
     }
   }
@@ -64,7 +64,7 @@ class Bird extends AnimationComponent with Resizable {
   }
 
   whenTap() {
-    if(isFrozen) {
+    if (isFrozen) {
       isFrozen = false;
     }
     this.speedY = -BOOST;
