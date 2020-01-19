@@ -1,3 +1,7 @@
+import 'package:flame/anchor.dart';
+import 'package:flame/components/animation_component.dart';
+import 'package:flame/components/component.dart';
+import 'package:flame/components/mixins/resizable.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +19,49 @@ void main() async {
   runApp(game.widget);
 }
 
-class MyGame extends BaseGame {
+class Bg extends Component with Resizable {
+  final paint = Paint()..color = COLOR;
 
+  @override
+  void render(Canvas c) {
+    c.drawRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height), paint);
+  }
+
+  @override
+  void update(double t) {}
+}
+
+class Bird extends AnimationComponent with Resizable {
+  double speedY;
+
+  Bird() : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
+    this.anchor = Anchor.center;
+  }
+
+  @override
+  void resize(Size size) {
+    super.resize(size);
+    reset();
+  }
+
+  @override
+  void update(double t) {
+    super.update(t);
+
+    this.y += speedY * t - GRAVITY * t * t / 2;
+    this.speedY += GRAVITY * t;
+  }
+
+  void reset() {
+    this.x = size.width / 2;
+    this.y = size.height / 2;
+    this.speedY = 0.0;
+  }
+}
+
+class MyGame extends BaseGame {
   MyGame(Size size) {
-    // TODO: initialize game here
+    add(Bg());
+    add(Bird());
   }
 }
