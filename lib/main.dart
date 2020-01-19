@@ -52,7 +52,7 @@ class Bg extends Component with Resizable {
 class Bird extends AnimationComponent with Resizable {
   static const SIZE = 52.0;
   static const GRAVITY = 400.0;
-  static const  BOOST = 380.0;
+  static const  BOOST = -380.0;
 
   bool frozen = true;
   double speedY;
@@ -92,7 +92,7 @@ class Bird extends AnimationComponent with Resizable {
   }
 
   void boost() {
-    speedY = (speedY - BOOST).clamp(-BOOST, speedY);
+    speedY = (speedY + BOOST).clamp(BOOST, speedY);
   }
 
   void tap() {
