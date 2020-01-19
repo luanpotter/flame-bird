@@ -33,7 +33,7 @@ class Bg extends Component with Resizable {
 
 class Bird extends AnimationComponent with Resizable {
   double speedY;
-
+  bool freeze  =true;
   Bird() : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
     this.anchor = Anchor.center;
   }
@@ -46,7 +46,12 @@ class Bird extends AnimationComponent with Resizable {
 
   @override
   void update(double t) {
+    if(freeze) return;
     super.update(t);
+
+    if(y > size.height) {
+      this.reset();
+    }
 
     this.y += speedY * t - GRAVITY * t * t / 2;
     this.speedY += GRAVITY * t;
@@ -56,12 +61,28 @@ class Bird extends AnimationComponent with Resizable {
     this.x = size.width / 2;
     this.y = size.height / 2;
     this.speedY = 0.0;
+    this.freeze = true;
+  }
+
+  void onTap() {
+    if(freeze) {
+      freeze = false;
+      return;
+    }
+
+    speedY = (speedY + BOOST).clamp(BOOST, speedY);
   }
 }
 
 class MyGame extends BaseGame {
+  Bird bird;
   MyGame(Size size) {
     add(Bg());
-    add(Bird());
+    add( bird = Bird() );
+  }
+
+  @override
+  void onTap() {
+    bird.onTap();
   }
 }
