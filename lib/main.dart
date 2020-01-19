@@ -4,6 +4,7 @@ import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/resizable.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/position.dart';
 import 'package:flutter/material.dart';
 
 const COLOR = const Color(0xFFDDC0A3);
@@ -32,11 +33,13 @@ class Bg extends Component with Resizable {
 }
 
 class Bird extends AnimationComponent with Resizable {
-  double speedY;
-  bool freeze  =true;
+  double speedY = 0.0;
+  bool freeze = true;
   Bird() : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
     this.anchor = Anchor.center;
   }
+
+  Position get velocity => Position(300, speedY);
 
   @override
   void resize(Size size) {
@@ -55,12 +58,14 @@ class Bird extends AnimationComponent with Resizable {
 
     this.y += speedY * t - GRAVITY * t * t / 2;
     this.speedY += GRAVITY * t;
+    this.angle = velocity.angle();
   }
 
   void reset() {
     this.x = size.width / 2;
     this.y = size.height / 2;
     this.speedY = 0.0;
+    this.angle = 0.0;
     this.freeze = true;
   }
 
