@@ -1,30 +1,29 @@
-import 'dart:math' as math;
-
 import 'package:flame/anchor.dart';
-import 'package:flame/components/animation_component.dart';
 import 'package:flame/components/component.dart';
+import 'package:flame/components/sprite_animation_component.dart';
 import 'package:flame/components/mixins/resizable.dart';
+import 'package:flame/extensions/vector2.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame/position.dart';
+import 'package:flame/gestures.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final size = await Flame.util.initialDimensions();
+  await Flame.images.loadAll(['bird.png']);
+  final gameSize = await Flame.util.initialDimensions();
 
-  final game = MyGame(size);
+  final game = MyGame(gameSize);
   runApp(game.widget);
 }
 
-
-class MyGame extends BaseGame {
+class MyGame extends BaseGame with TapDetector {
   Bird bird;
   Bg background;
 
-  MyGame(Size size) {
+  MyGame(Vector2 gameSize) {
     add(background = Bg());
-    add(bird = Bird(size));
+    add(bird = Bird(gameSize));
   }
 
   @override
@@ -34,59 +33,58 @@ class MyGame extends BaseGame {
 }
 
 class Bg extends Component with Resizable {
-  static final _brown = const Color(0xFFDDC0A3);
-
-  Color color = Bg._brown;
+  static const _brown = const Color(0xFFDDC0A3);
+  static final bgColor = Paint()..color = _brown;
 
   @override
   void render(Canvas c) {
-      c.drawRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height), bgColor);
+    c.drawRect(gameSize.toRect(), bgColor);
   }
-
-  get bgColor => Paint()..color = color;
-
-  @override
-  void update(double t) {}
 }
 
-class Bird extends AnimationComponent with Resizable {
-  static const SIZE = 52.0;
+class Bird extends SpriteAnimationComponent with Resizable {
   static const GRAVITY = 400.0;
-  static const  BOOST = -380.0;
+  static const BOOST = -380.0;
 
   bool frozen = true;
   double speedY;
 
-  Bird(Size size) : super.sequenced(SIZE, SIZE, 'bird.png', 4, textureWidth: 16.0, textureHeight: 16.0) {
-    anchor = Anchor.bottomCenter;
+  Bird(Vector2 gameSize)
+      : super.sequenced(
+          Vector2.all(52.0),
+          Flame.images.fromCache('bird.png'),
+          4,
+          textureSize: Vector2.all(16.0),
+        ) {
+    anchor = Anchor.center;
   }
 
   void reset() {
     frozen = true;
-    x = size.width / 2;
-    y = size.height / 2;
+    position = gameSize / 2;
     speedY = 0.0;
-    angle = velocity.angle();
   }
 
   @override
-  void resize(Size size) {
-    super.resize(size);
-    this.reset();
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    reset();
   }
 
-  Position get velocity => Position(200.0, speedY);
+  Vector2 get velocity => Vector2(200.0, speedY);
+
+  @override
+  double get angle => -velocity.angleToSigned(Vector2(1, 0));
 
   @override
   void update(double t) {
     if (!frozen) {
       super.update(t);
-      this.y += speedY * t - GRAVITY * t * t / 2;
-      this.speedY += GRAVITY * t;
-      this.angle = velocity.angle();
+      y += speedY * t - GRAVITY * t * t / 2;
+      speedY += GRAVITY * t;
 
-      if (y > size.height + 150) {
-        this.reset();
+      if (y > gameSize.y + 150) {
+        reset();
       }
     }
   }
